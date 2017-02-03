@@ -14,13 +14,13 @@ import model.ErrorMessage;
 @RestController
 public class GenericExceptionMapper{
 
-    
+	
     
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(value = Throwable.class)
     public ErrorMessage handleInvalidUriException(Throwable e){
     	
-    	ErrorMessage error=new ErrorMessage(500,"INTERNAL_SERVER_ERROR");
+    	ErrorMessage error=new ErrorMessage(500,"Internal Server Error");
     	
         return error;
     }

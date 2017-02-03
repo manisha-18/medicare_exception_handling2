@@ -1,7 +1,5 @@
 package dao;
 
-import static org.mockito.Matchers.isNull;
-
 import org.springframework.stereotype.Component;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
@@ -55,7 +53,8 @@ public class DoctorDao {
 
 		DBCollection coll=MongoUtil.mongoInit();
 		DBCursor cursor = coll.find();
-		JSONArray jsonarrray = new JSONArray();
+		JSONArray jsonarray = new JSONArray();
+		
 
 		while (cursor.hasNext()) {
 			BasicDBObject bobj = (BasicDBObject) cursor.next();
@@ -67,10 +66,10 @@ public class DoctorDao {
 			jobj.put("timeslot", bobj.get("timeslot"));
 			jobj.put("experience", bobj.get("experience"));
 			jobj.put("contactno", bobj.get("contactno"));
-			jsonarrray.add(jobj);
+			jsonarray.add(jobj);
 		}
 
-		return jsonarrray;
+		return jsonarray;
 
 	}
 

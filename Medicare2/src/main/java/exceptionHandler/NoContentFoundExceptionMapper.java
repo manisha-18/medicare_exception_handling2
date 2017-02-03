@@ -10,13 +10,14 @@ import model.ErrorMessage;
 
 
 @RestController
-public class InsertionFailedExceptionMapper {
+public class NoContentFoundExceptionMapper {
 
-	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(value = InsertionFailedException.class)
-    public ErrorMessage handleInsertionFaliedException(InsertionFailedException e){
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+    @ExceptionHandler(value = NoContentFoundException.class)
+    public ErrorMessage handleNoContentFoundException(NoContentFoundException e){
     	
-			ErrorMessage error=new ErrorMessage(500,"Insertion Failed");	
+			ErrorMessage error=new ErrorMessage(204,"No Content Found");	
         return error;
     }
+	
 }

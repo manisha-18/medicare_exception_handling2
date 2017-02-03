@@ -1,14 +1,22 @@
 package controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import exceptionHandler.DataNotFoundException;
+import exceptionHandler.InsertionFailedException;
+import exceptionHandler.NoContentFoundException;
 import model.Doctor;
+import model.ErrorMessage;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import service.DoctorService;
@@ -71,7 +79,41 @@ public class DoctorController {
 			doctorService.deleteAllDoctor();
 		}
 			
-
+//////////////////////////////////////////////////////////////////////////////////////////////
+		
+		
+		
+		@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	    @ExceptionHandler(value = InsertionFailedException.class)
+	    public ErrorMessage handleInsertionFaliedException(InsertionFailedException e){
+	    	
+				ErrorMessage error=new ErrorMessage(500,"Insertion Failed");	
+	        return error;
+	    }
+		@ResponseStatus(HttpStatus.NOT_FOUND)
+	    @ExceptionHandler(value = DataNotFoundException.class)
+	    public ErrorMessage handleDataNotFoundException(DataNotFoundException e){
+	    	
+	    	ErrorMessage error=new ErrorMessage(404,"Record Not Found");
+	    	
+	        return error;
+	    }
+		@ResponseStatus(HttpStatus.NO_CONTENT)
+	    @ExceptionHandler(value = NoContentFoundException.class)
+	    public ErrorMessage handleNoContentFoundException(NoContentFoundException e){
+	    	
+				ErrorMessage error=new ErrorMessage(204,"No Content Found");	
+	        return error;
+	    }
+	    
+	    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	    @ExceptionHandler(value = Throwable.class)
+	    public ErrorMessage handleInvalidUriException(Throwable e){
+	    	
+	    	ErrorMessage error=new ErrorMessage(500,"Internal Server Error");
+	    	
+	        return error;
+	    }
 }
 	
 
