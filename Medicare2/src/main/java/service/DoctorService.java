@@ -1,6 +1,7 @@
 package service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import dao.DoctorDao;
 import exceptionHandler.DataNotFoundException;
@@ -45,7 +46,7 @@ public class DoctorService {
 		JSONArray doctors=this.doctorDao.getAllDoctors();
 		
 		if(doctors.isEmpty()){
-			throw new NoContentFoundException("No Content Found");
+			throw new NoContentFoundException("No content found");
 		}
 		
 		return doctors;
@@ -61,7 +62,7 @@ public class DoctorService {
 		JSONObject doc = doctorDao.getDoctorById(id);
 
 		if (doc.isEmpty()) {
-			throw new DataNotFoundException("Record with id " + id + " not found.");
+			throw new DataNotFoundException("Record not found");
 		}
 
 		return doctorDao.getDoctorById(id);
@@ -72,14 +73,26 @@ public class DoctorService {
 	
 
 	// update doctor by id using PUT
-	public void updateDoctor(Doctor doctor) {
+	public JSONObject updateDoctor(Doctor doctor) {
 
-		doctorDao.updateDoctor(doctor);
-
+		boolean updated=doctorDao.updateDoctor(doctor);
+		
+		if(updated){
+			JSONObject job=new JSONObject();
+			job.put("statuscode", HttpStatus.OK);
+			
+			return job;
+		}
+		else
+			{JSONObject job=new JSONObject();
+			job.put("statuscode", HttpStatus.CREATED);
+			return job;
+			}
 	}
 	
 	
 	
+
 
 	// delete a doctor
 	public void deleteDoctor(int id) {
