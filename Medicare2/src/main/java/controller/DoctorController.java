@@ -1,5 +1,7 @@
 package controller;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,6 +30,9 @@ public class DoctorController {
 
 	@Autowired
 	private DoctorService doctorService;
+	
+	
+	
 	
 		//save doctor entity using POST
 		@RequestMapping(method=RequestMethod.POST,consumes=MediaType.APPLICATION_JSON_VALUE)
@@ -61,9 +66,10 @@ public class DoctorController {
 	
 		//update doctor by id using PUT
 		@RequestMapping(value="/{id}",method=RequestMethod.PUT,consumes=MediaType.APPLICATION_JSON_VALUE)
-		public void updateDoctor(@RequestBody Doctor doctor){
+		@ResponseBody
+		public JSONObject updateDoctor(@RequestBody Doctor doctor,@PathVariable("id") int id, HttpServletResponse response){
 			
-			doctorService.updateDoctor(doctor);
+			return doctorService.updateDoctor(doctor,id,response);
 			
 		}
 		
@@ -73,47 +79,18 @@ public class DoctorController {
 			doctorService.deleteDoctor(id);
 		}
 		
+		
 		//delete all doctors
 		@RequestMapping(method=RequestMethod.DELETE)
 		public void deleteAllDoctor() {
 			doctorService.deleteAllDoctor();
 		}
 			
-//////////////////////////////////////////////////////////////////////////////////////////////
+
+
 		
 		
-		
-		@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-	    @ExceptionHandler(value = InsertionFailedException.class)
-	    public ErrorMessage handleInsertionFaliedException(InsertionFailedException e){
-	    	
-				ErrorMessage error=new ErrorMessage(500,"Insertion Failed");	
-	        return error;
-	    }
-		@ResponseStatus(HttpStatus.NOT_FOUND)
-	    @ExceptionHandler(value = DataNotFoundException.class)
-	    public ErrorMessage handleDataNotFoundException(DataNotFoundException e){
-	    	
-	    	ErrorMessage error=new ErrorMessage(404,"Record Not Found");
-	    	
-	        return error;
-	    }
-		@ResponseStatus(HttpStatus.NO_CONTENT)
-	    @ExceptionHandler(value = NoContentFoundException.class)
-	    public ErrorMessage handleNoContentFoundException(NoContentFoundException e){
-	    	
-				ErrorMessage error=new ErrorMessage(204,"No Content Found");	
-	        return error;
-	    }
-	    
-	    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-	    @ExceptionHandler(value = Throwable.class)
-	    public ErrorMessage handleInvalidUriException(Throwable e){
-	    	
-	    	ErrorMessage error=new ErrorMessage(500,"Internal Server Error");
-	    	
-	        return error;
-	    }
+	   
 }
 	
 

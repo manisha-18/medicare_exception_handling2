@@ -2,24 +2,26 @@ package model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.springframework.http.HttpStatus;
+
 @XmlRootElement
 public class ErrorMessage {
-	private int statuscode;
+private HttpStatus statuscode;
 private String message;
 
 public ErrorMessage(){}
 
-public ErrorMessage(int statuscode, String message) {
-	super();
+public ErrorMessage( HttpStatus statuscode,String message) {
+
 	this.statuscode = statuscode;
 	this.message = message;
 }
 
-public int getStatuscode() {
+public HttpStatus getStatuscode() {
 	return statuscode;
 }
 
-public void setStatuscode(int i) {
+public void setStatuscode(HttpStatus i) {
 	this.statuscode = i;
 }
 

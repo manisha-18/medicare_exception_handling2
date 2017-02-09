@@ -1,6 +1,9 @@
 package service;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import dao.DoctorDao;
 import exceptionHandler.DataNotFoundException;
@@ -23,14 +26,13 @@ public class DoctorService {
 	public JSONObject insert(Doctor doctor) {
 
 		JSONObject doc = this.doctorDao.insert(doctor);
-		// if insertion is successful
+		// if insertion is not successful
 		if (doc.isEmpty()) {
 			throw new InsertionFailedException("Insertion failed");
 		
 		}
-		// if insertion was not successful
+		// if insertion was successful
 		else {
-
 			return doc;
 
 		}
@@ -45,7 +47,7 @@ public class DoctorService {
 		JSONArray doctors=this.doctorDao.getAllDoctors();
 		
 		if(doctors.isEmpty()){
-			throw new NoContentFoundException("No Content Found");
+			throw new NoContentFoundException("No content found");
 		}
 		
 		return doctors;
@@ -56,13 +58,13 @@ public class DoctorService {
 	
 
 	// get doctor by id
-	public JSONObject getDoctorById(int id) {
+	public JSONObject getDoctorById(int id) throws DataNotFoundException{
 
 		JSONObject doc = doctorDao.getDoctorById(id);
 
 		if (doc.isEmpty()) {
-			throw new DataNotFoundException("Record with id " + id + " not found.");
-		}
+			throw new DataNotFoundException("Record not found");
+		}        
 
 		return doctorDao.getDoctorById(id);
 
@@ -72,14 +74,30 @@ public class DoctorService {
 	
 
 	// update doctor by id using PUT
-	public void updateDoctor(Doctor doctor) {
+	public JSONObject updateDoctor(Doctor doctor,int id, HttpServletResponse response) {
 
-		doctorDao.updateDoctor(doctor);
-
+		boolean updated=doctorDao.updateDoctor(doctor,id);
+		//if updated already existing record
+		if(updated){
+			JSONObject job=new JSONObject();
+			job.put("statuscode", HttpStatus.OK);
+			response.setStatus(200);
+			return job;
+		}
+		
+		//if new record created
+		else
+			{
+			JSONObject job=new JSONObject();
+			job.put("statuscode", HttpStatus.CREATED);
+			response.setStatus(201);
+			return job;
+			}
 	}
 	
 	
 	
+
 
 	// delete a doctor
 	public void deleteDoctor(int id) {

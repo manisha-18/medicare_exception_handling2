@@ -1,5 +1,7 @@
 package exceptionHandler;
 
+import javax.ws.rs.ext.Provider;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -8,20 +10,61 @@ import org.springframework.web.bind.annotation.RestController;
 
 import model.ErrorMessage;
 
-
-
 @ControllerAdvice
 @RestController
-public class GenericExceptionMapper{
+
+public class GenericExceptionMapper {
+	
 
 	
-    
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(value = Throwable.class)
-    public ErrorMessage handleInvalidUriException(Throwable e){
-    	
-    	ErrorMessage error=new ErrorMessage(500,"Internal Server Error");
-    	
-        return error;
-    }
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@ExceptionHandler(value = NoContentFoundException.class)
+	public ErrorMessage handleNoContentFoundException(NoContentFoundException e) {
+
+		ErrorMessage error = new ErrorMessage(HttpStatus.NO_CONTENT, "No content found");
+
+		return error;
+		
+	}
+
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	
+	
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	@ExceptionHandler(value = DataNotFoundException.class)
+	public  ErrorMessage handleDataNotFoundException(DataNotFoundException e) {
+		ErrorMessage error= new ErrorMessage(HttpStatus.NOT_FOUND,"Record not found");
+		return error;
+		
+	
+	}
+
+	//////////////////////////////////////////////////////////////////
+
+	
+
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ExceptionHandler(value = InsertionFailedException.class)
+	public ErrorMessage handleInsertionFailedException(InsertionFailedException e) {
+
+		ErrorMessage error = new ErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR,"Insertion Failed");
+
+		return error;
+	}
+	
+	
+	/////////////////////////////////// by default///////////////////////////////
+
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ExceptionHandler(value = Throwable.class)
+	public ErrorMessage handleInvalidUriException(Throwable e) {
+
+		ErrorMessage error = new ErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR,"Internal server error");
+
+		return error;
+	}
+
+
+	
 }
