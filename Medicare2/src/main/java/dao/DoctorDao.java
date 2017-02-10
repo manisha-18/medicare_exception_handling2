@@ -1,6 +1,5 @@
 package dao;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
@@ -12,7 +11,7 @@ import net.minidev.json.JSONObject;
 @Component
 public class DoctorDao {
 
-	// insert a doctor
+	// insert record of a doctor
 	public JSONObject insert(Doctor doctor) {
 
 		DBCollection coll = MongoUtil.mongoInit();
@@ -27,6 +26,7 @@ public class DoctorDao {
 
 		JSONObject jobj = new JSONObject();
 
+		// if insertion is successful
 		if (coll.insert(object).wasAcknowledged()) {
 
 			jobj.put("id", doctor.getId());
@@ -40,6 +40,7 @@ public class DoctorDao {
 			return jobj;
 		}
 
+		// if insertion failed
 		else {
 
 			return jobj;
@@ -54,21 +55,26 @@ public class DoctorDao {
 		DBCursor cursor = coll.find();
 		JSONArray jsonarray = new JSONArray();
 
-		while (cursor.hasNext()) {
-			BasicDBObject bobj = (BasicDBObject) cursor.next();
-			JSONObject jobj = new JSONObject();
-			jobj.put("id", bobj.get("id"));
-			jobj.put("name", bobj.get("name"));
-			jobj.put("email", bobj.get("email"));
-			jobj.put("specialisation", bobj.get("specialisation"));
-			jobj.put("timeslot", bobj.get("timeslot"));
-			jobj.put("experience", bobj.get("experience"));
-			jobj.put("contactno", bobj.get("contactno"));
-			jsonarray.add(jobj);
+		// if any record is present to show
+		if (cursor.next() != null && cursor.count() != 0) {
+
+			while (cursor.hasNext()) {
+				BasicDBObject bobj = (BasicDBObject) cursor.next();
+				JSONObject jobj = new JSONObject();
+				jobj.put("id", bobj.get("id"));
+				jobj.put("name", bobj.get("name"));
+				jobj.put("email", bobj.get("email"));
+				jobj.put("specialisation", bobj.get("specialisation"));
+				jobj.put("timeslot", bobj.get("timeslot"));
+				jobj.put("experience", bobj.get("experience"));
+				jobj.put("contactno", bobj.get("contactno"));
+				jsonarray.add(jobj);
+			}
+			return jsonarray;
 		}
 
+		// or else return empty array
 		return jsonarray;
-
 	}
 
 	// get doctor by id
@@ -84,6 +90,7 @@ public class DoctorDao {
 			return null;
 		}
 
+		// else return the found record
 		JSONObject jobj = new JSONObject();
 
 		while (cursor.hasNext()) {
@@ -103,15 +110,16 @@ public class DoctorDao {
 	}
 
 	// update doctor by id
-	public boolean updateDoctor(Doctor doctor,int id) {
+	public int updateDoctor(Doctor doctor, int id) {
 
+	
 		DBCollection coll = MongoUtil.mongoInit();
 		BasicDBObject queryobj = new BasicDBObject();
-		queryobj.put("id",id);
+		queryobj.put("id", id);
 		DBCursor cursor = (DBCursor) coll.find(queryobj);
 
-		//if already a record is present with this id
-		//then modify the record
+		// if already a record is present with this id
+		// then modify the record
 		if (cursor != null && cursor.count() != 0) {
 
 			while (cursor.hasNext()) {
@@ -122,15 +130,18 @@ public class DoctorDao {
 				bobj.put("timeslot", doctor.getTimeslot());
 				bobj.put("experience", doctor.getExperience());
 				bobj.put("contactno", doctor.getContactno());
-				coll.update(queryobj, bobj);
-				
+
+				// if operation gets completed
+				if (coll.update(queryobj, bobj).wasAcknowledged()) {
+					return 1;
+				}
 			}
-			
-			return true;
+			// if operation fails
+			return -1;
 		}
-		
-		//if it is a new record then insert it
-		else{
+
+		// if it is a new record then insert it
+		else {
 			BasicDBObject object = new BasicDBObject();
 			object.put("id", id);
 			object.put("name", doctor.getName());
@@ -140,14 +151,18 @@ public class DoctorDao {
 			object.put("experience", doctor.getExperience());
 			object.put("contactno", doctor.getContactno());
 			coll.insert(object);
-			
-			return false;
-		}
-	}
-	
 
+			return 0;
+		}
+		
+	}
+
+	
+	
+	
+	
 	// delete a doctor
-	public void deleteDoctor(int id) {
+	public boolean deleteDoctor(int id) {
 
 		DBCollection coll = MongoUtil.mongoInit();
 		BasicDBObject queryobj = new BasicDBObject();
@@ -156,17 +171,29 @@ public class DoctorDao {
 
 		while (cursor.hasNext()) {
 			BasicDBObject bobj = (BasicDBObject) cursor.next();
-			coll.remove(bobj);
+			//if deletion was successful
+			if(coll.remove(bobj).wasAcknowledged()){
+				return true;
+			}
 		}
+		//if deletion failed
+		return false;
 
 	}
 
+	
+	
 	// delete all doctors
-	public void deleteAllDoctor() {
+	public boolean deleteAllDoctor() {
 		DBCollection coll = MongoUtil.mongoInit();
 		BasicDBObject bobj = new BasicDBObject();
-		coll.remove(bobj);
-
+		
+		//if deletion was successful
+		if(coll.remove(bobj).wasAcknowledged()){
+			return true;
+		}
+		//if deletion failed
+		return false;
 	}
 
 }

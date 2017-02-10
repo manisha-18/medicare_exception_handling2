@@ -51,7 +51,7 @@ public class DoctorControllerTest {
 		docs.add(new Doctor());
 		docs.add(new Doctor());
 		
-		when(docService.getAllDoctors()).thenReturn(docs);
+		when(docService.getAllDoctors(null)).thenReturn(docs);
 		
 		mockMvc.perform(get("/doctors"))
 		.andExpect(status().isOk())

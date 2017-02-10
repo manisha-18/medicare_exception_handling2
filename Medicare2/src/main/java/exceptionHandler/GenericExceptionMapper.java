@@ -16,21 +16,22 @@ import model.ErrorMessage;
 public class GenericExceptionMapper {
 	
 
-	
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@ExceptionHandler(value = NoContentFoundException.class)
-	public ErrorMessage handleNoContentFoundException(NoContentFoundException e) {
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ExceptionHandler(value = InsertionFailedException.class)
+	public ErrorMessage handleInsertionFailedException(InsertionFailedException e) {
 
-		ErrorMessage error = new ErrorMessage(HttpStatus.NO_CONTENT, "No content found");
+		ErrorMessage error = new ErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR,"Insertion Failed");
 
 		return error;
-		
 	}
+	
+	
 
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	
 	
+	//for get request failure
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@ExceptionHandler(value = DataNotFoundException.class)
 	public  ErrorMessage handleDataNotFoundException(DataNotFoundException e) {
@@ -42,23 +43,22 @@ public class GenericExceptionMapper {
 
 	//////////////////////////////////////////////////////////////////
 
-	
+	//for failure of update request
+		@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+		@ExceptionHandler(value = UpdationFailedException.class)
+		public  ErrorMessage handleUpdationFailedException(UpdationFailedException e) {
+			ErrorMessage error= new ErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR,"Could not update the record");
+			return error;
+			
+		
+		}
 
-	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-	@ExceptionHandler(value = InsertionFailedException.class)
-	public ErrorMessage handleInsertionFailedException(InsertionFailedException e) {
-
-		ErrorMessage error = new ErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR,"Insertion Failed");
-
-		return error;
-	}
-	
 	
 	/////////////////////////////////// by default///////////////////////////////
 
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(value = Throwable.class)
-	public ErrorMessage handleInvalidUriException(Throwable e) {
+	public ErrorMessage handleInternalServerErrorException(Throwable e) {
 
 		ErrorMessage error = new ErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR,"Internal server error");
 

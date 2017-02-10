@@ -3,22 +3,15 @@ package controller;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import exceptionHandler.DataNotFoundException;
-import exceptionHandler.InsertionFailedException;
-import exceptionHandler.NoContentFoundException;
 import model.Doctor;
-import model.ErrorMessage;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import service.DoctorService;
@@ -37,9 +30,9 @@ public class DoctorController {
 		//save doctor entity using POST
 		@RequestMapping(method=RequestMethod.POST,consumes=MediaType.APPLICATION_JSON_VALUE)
 		@ResponseBody
-		public JSONObject insert(@RequestBody Doctor doctor){
+		public JSONObject insert(@RequestBody Doctor doctor, HttpServletResponse response){
 		
-			return (JSONObject) doctorService.insert(doctor);
+			return (JSONObject) doctorService.insert(doctor, response);
 		
 		}
 	
@@ -47,9 +40,9 @@ public class DoctorController {
 		//get all doctors using GET
 		@RequestMapping(method=RequestMethod.GET)
 		@ResponseBody
-		public JSONArray getAllDoctors(){
+		public JSONArray getAllDoctors(HttpServletResponse response){
 		
-			return doctorService.getAllDoctors();
+			return doctorService.getAllDoctors(response);
 		
 		}
 	
@@ -57,9 +50,9 @@ public class DoctorController {
 		//get doctor by id using GET
 		@RequestMapping(value="/{id}",method=RequestMethod.GET)
 		@ResponseBody
-		public JSONObject getDoctorById(@PathVariable("id") int id){
+		public JSONObject getDoctorById(@PathVariable("id") int id, HttpServletResponse response){
 		
-			return doctorService.getDoctorById(id);
+			return doctorService.getDoctorById(id, response);
 		
 		}
 		
@@ -75,15 +68,15 @@ public class DoctorController {
 		
 		//delete a doctor
 		@RequestMapping(value="/{id}",method=RequestMethod.DELETE)
-		public void deleteDoctor(@PathVariable int id) {
-			doctorService.deleteDoctor(id);
+		public void deleteDoctor(@PathVariable int id, HttpServletResponse response) {
+			doctorService.deleteDoctor(id, response);
 		}
 		
 		
 		//delete all doctors
 		@RequestMapping(method=RequestMethod.DELETE)
-		public void deleteAllDoctor() {
-			doctorService.deleteAllDoctor();
+		public void deleteAllDoctor(HttpServletResponse response) {
+			doctorService.deleteAllDoctor(response);
 		}
 			
 
